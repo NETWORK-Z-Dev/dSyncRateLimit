@@ -9,7 +9,7 @@ This small library is part of the dSync concept and will handle rate limits by e
 ```js
 import RateLimiter from "@hackthedev/dsync-ratelimit";
 
-const rateLimiter = new RateLimiter({
+const rateLimiter = new dSyncRateLimit({
     getIpLimit: async (req) => {
         if (!req.user) return 20;
         if (req.user.plan === "pro") return 200;
@@ -30,7 +30,7 @@ const rateLimiter = new RateLimiter({
 
 ------
 
-## Example Endpoint
+## Example express endpoint
 
 The following example code is just an example and meant to showcase how the rate limit middleware can be used.
 
@@ -46,7 +46,56 @@ app.post(
         // whatever you wanna do in this endpoint
     }
 );
-
-
 ```
+
+------
+
+## Manual user rate limiting
+
+```js
+io.on("connection", (socket) => {
+    socket.on("message", (msg) => {
+        const r = rateLimiter.check(`message/${socket.handshake.address}`,20);
+
+        if (!r.ok) {
+            socket.emit("error", "rate_limited");
+            return;
+        }
+
+        handleMessage(msg);
+    });
+});
+```
+
+### With total check
+
+```js
+io.on("connection", (socket) => {
+    socket.on("message", (msg) => {
+        const rUser = rateLimiter.check(`message/${socket.handshake.address}`,20);
+        const rTotal = rateLimiter.check(`message/total`,200);
+
+        if (!rUser.ok || !rTotal.ok) {
+            socket.emit("error", "rate_limited");
+            return;
+        }
+
+        handleMessage(msg);
+    });
+});
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
