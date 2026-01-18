@@ -50,7 +50,9 @@ app.post(
 
 ------
 
-## Manual user rate limiting
+## Manual rate limiting
+
+By using `rateLimiter.check()`
 
 ```js
 io.on("connection", (socket) => {
