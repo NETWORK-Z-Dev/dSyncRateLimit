@@ -39,7 +39,7 @@ app.post(
     "/login",
     rateLimiter.middleware({
         getIpLimit: async () => 5,
-        getTotalLimit: async () => 5,
+        getTotalLimit: async () => 20,
         getBlockUntil: async () => new Date(Date.now() + 5 * 60_000)
     }),
     async (req, res) => {
